@@ -1,0 +1,32 @@
+# SillyTavern Relay2 Anything 统一配置
+# 复制为 config.yaml 并填入实际值
+
+st:
+  url: "http://127.0.0.1:8000"
+  headless: true
+  viewport_width: 600
+  refresh_delay: 3
+  chat_switch_delay: 2
+
+telegram:
+  enabled: false
+  bot_token: ""
+  admins: []
+  admin_mode: false
+
+discord:
+  enabled: false
+  bot_token: ""
+  admins: []
+  admin_mode: false
+
+napcat:
+  enabled: false
+  host: "0.0.0.0"
+  port: 6199
+  admins: []
+  admin_mode: false
+
+web:
+  host: "127.0.0.1"
+  port: 4396

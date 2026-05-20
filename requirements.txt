@@ -1,0 +1,21 @@
+# === 核心依赖（必需）===
+playwright>=1.40.0
+pyyaml>=6.0
+
+# === Web 管理面板 ===
+fastapi>=0.100.0
+uvicorn>=0.23.0
+jinja2>=3.1.0
+
+# === Telegram 平台 ===
+python-telegram-bot>=20.0
+
+# === Discord 平台 ===
+discord.py>=2.3.0
+
+# === NapCat/QQ 平台 ===
+websockets>=12.0
+
+# === Markdown 渲染（列表转图片）===
+markdown>=3.5.0
+pygments>=2.17.0

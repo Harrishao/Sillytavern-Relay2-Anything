@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ST Relay Manager</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="app">
+  <!-- 标题栏 -->
+  <header>
+    <h1>SillyTavern Relay2 Anything</h1>
+    <span id="time"></span>
+  </header>
+
+  <!-- 平台运行状态卡片 -->
+  <section class="section">
+    <div class="platform-cards">
+      <div class="platform-card">
+        <div class="pc-header">
+          <h3>Telegram</h3>
+          <span class="run-badge" id="badge-telegram">--</span>
+        </div>
+        <div class="pc-body"><span id="token-telegram"></span></div>
+        <div class="pc-actions">
+          <button class="btn-toggle start" id="btn-toggle-telegram" onclick="togglePlatform('telegram')">启动</button>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="pc-header">
+          <h3>Discord</h3>
+          <span class="run-badge" id="badge-discord">--</span>
+        </div>
+        <div class="pc-body"><span id="token-discord"></span></div>
+        <div class="pc-actions">
+          <button class="btn-toggle start" id="btn-toggle-discord" onclick="togglePlatform('discord')">启动</button>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="pc-header">
+          <h3>NapCat / QQ</h3>
+          <span class="run-badge" id="badge-napcat">--</span>
+        </div>
+        <div class="pc-body"><span id="token-napcat"></span></div>
+        <div class="pc-actions">
+          <button class="btn-toggle start" id="btn-toggle-napcat" onclick="togglePlatform('napcat')">启动</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 配置文件 -->
+  <section class="section">
+    <h2>配置文件</h2>
+
+    <div class="config-group">
+      <label>SillyTavern URL</label>
+      <input type="text" id="cfg-st-url" placeholder="http://127.0.0.1:8000" onchange="saveField('st','url',this.value)">
+    </div>
+
+    <!-- Telegram -->
+    <div class="config-card">
+      <h3>Telegram</h3>
+      <div class="config-row">
+        <label>Bot Token</label>
+        <div class="token-input-wrap">
+          <input type="password" id="cfg-telegram-bot_token" placeholder="123456:ABC..." onchange="saveField('telegram','bot_token',this.value)">
+          <button type="button" class="token-toggle" onclick="toggleTokenVisibility('telegram', this)">显示</button>
+        </div>
+      </div>
+      <div class="config-row">
+        <label>管理员模式</label>
+        <label class="switch">
+          <input type="checkbox" id="cfg-telegram-admin_mode" onchange="saveField('telegram','admin_mode',this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="config-row">
+        <label>管理员 ID</label>
+        <div class="tag-area" id="tags-telegram"></div>
+        <button class="btn-add-tag" onclick="addAdmin('telegram')">+ 添加</button>
+      </div>
+    </div>
+
+    <!-- Discord -->
+    <div class="config-card">
+      <h3>Discord</h3>
+      <div class="config-row">
+        <label>Bot Token</label>
+        <div class="token-input-wrap">
+          <input type="password" id="cfg-discord-bot_token" placeholder="MTIz..." onchange="saveField('discord','bot_token',this.value)">
+          <button type="button" class="token-toggle" onclick="toggleTokenVisibility('discord', this)">显示</button>
+        </div>
+      </div>
+      <div class="config-row">
+        <label>管理员模式</label>
+        <label class="switch">
+          <input type="checkbox" id="cfg-discord-admin_mode" onchange="saveField('discord','admin_mode',this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="config-row">
+        <label>管理员 ID</label>
+        <div class="tag-area" id="tags-discord"></div>
+        <button class="btn-add-tag" onclick="addAdmin('discord')">+ 添加</button>
+      </div>
+    </div>
+
+    <!-- NapCat -->
+    <div class="config-card">
+      <h3>NapCat / QQ</h3>
+      <div class="config-row">
+        <label>端口</label>
+        <input type="number" id="cfg-napcat-port" placeholder="6199" onchange="saveField('napcat','port',this.value)">
+      </div>
+      <div class="config-row">
+        <label>管理员模式</label>
+        <label class="switch">
+          <input type="checkbox" id="cfg-napcat-admin_mode" onchange="saveField('napcat','admin_mode',this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="config-row">
+        <label>管理员 ID</label>
+        <div class="tag-area" id="tags-napcat"></div>
+        <button class="btn-add-tag" onclick="addAdmin('napcat')">+ 添加</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 实时日志 -->
+  <section class="section">
+    <div class="section-header">
+      <h2>实时日志</h2>
+      <button onclick="clearLogs()">清空</button>
+    </div>
+    <div class="log-container" id="log-container">
+      <pre id="log-output"></pre>
+    </div>
+  </section>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  状态刷新
+// ═══════════════════════════════════════════════════════
+
+async function refreshStatus() {
+  try {
+    var r = await fetch('/api/status');
+    var data = await r.json();
+    var platforms = ['telegram','discord','napcat'];
+    for (var i = 0; i < platforms.length; i++) {
+      var platform = platforms[i];
+      var info = data[platform];
+      if (!info) continue;
+      var badge = document.getElementById('badge-' + platform);
+      var btnToggle = document.getElementById('btn-toggle-' + platform);
+      if (badge) {
+        badge.textContent = info.running ? '运行中' : '未运行';
+        badge.className = 'run-badge ' + (info.running ? 'on' : 'off');
+      }
+      if (btnToggle) {
+        btnToggle.textContent = info.running ? '停止' : '启动';
+        btnToggle.className = 'btn-toggle ' + (info.running ? 'stop' : 'start');
+      }
+
+      var ts = document.getElementById('token-' + platform);
+      if (ts && info.bot_token !== undefined) {
+        ts.textContent = info.bot_token ? 'Token 已配置' : 'Token 未配置';
+        ts.className = info.bot_token ? 'hint ok' : 'hint warn';
+      }
+      if (ts && info.port !== undefined) {
+        ts.textContent = '端口 ' + info.port;
+        ts.className = 'hint ok';
+      }
+    }
+  } catch (e) { console.error(e); }
+}
+
+async function startPlatform(platform) {
+  try {
+    var r = await fetch('/api/platform/' + platform + '/start', {method:'POST'});
+    var data = await r.json();
+    if (data.ok) refreshStatus();
+  } catch (e) { console.error(e); }
+}
+
+async function stopPlatform(platform) {
+  try {
+    var r = await fetch('/api/platform/' + platform + '/stop', {method:'POST'});
+    var data = await r.json();
+    if (data.ok) refreshStatus();
+  } catch (e) { console.error(e); }
+}
+
+function togglePlatform(platform) {
+  var badge = document.getElementById('badge-' + platform);
+  if (badge && badge.textContent === '运行中') {
+    stopPlatform(platform);
+  } else {
+    startPlatform(platform);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  配置加载与保存
+// ═══════════════════════════════════════════════════════
+
+async function loadConfig() {
+  try {
+    var r = await fetch('/api/config');
+    var data = await r.json();
+
+    document.getElementById('cfg-st-url').value = data.st.url || '';
+
+    var platforms = ['telegram','discord','napcat'];
+    for (var i = 0; i < platforms.length; i++) {
+      var p = platforms[i];
+      var pc = data[p];
+      if (!pc) continue;
+      var btEl = document.getElementById('cfg-' + p + '-bot_token');
+      if (btEl) btEl.value = pc.bot_token || '';
+      var amEl = document.getElementById('cfg-' + p + '-admin_mode');
+      if (amEl) amEl.checked = pc.admin_mode || false;
+      var portEl = document.getElementById('cfg-' + p + '-port');
+      if (portEl) portEl.value = pc.port || '';
+      renderTags(p, pc.admins || []);
+    }
+  } catch (e) { console.error(e); }
+}
+
+function toggleTokenVisibility(platform, btn) {
+  var input = document.getElementById('cfg-' + platform + '-bot_token');
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '隐藏';
+  } else {
+    input.type = 'password';
+    btn.textContent = '显示';
+  }
+}
+
+async function saveField(platform, field, value) {
+  try {
+    await fetch('/api/config', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({platform:platform, field:field, value:value}),
+    });
+  } catch (e) { console.error(e); }
+}
+
+// ═══════════════════════════════════════════════════════
+//  管理员 ID 标签
+// ═══════════════════════════════════════════════════════
+
+function renderTags(platform, admins) {
+  var area = document.getElementById('tags-' + platform);
+  if (!area) return;
+  area.innerHTML = '';
+  for (var i = 0; i < admins.length; i++) {
+    var uid = admins[i];
+    var tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.textContent = uid;
+    var delBtn = document.createElement('button');
+    delBtn.className = 'tag-del';
+    delBtn.textContent = '×';
+    delBtn.onclick = (function(p, u) {
+      return function() { removeAdmin(p, u); };
+    })(platform, uid);
+    tag.appendChild(delBtn);
+    area.appendChild(tag);
+  }
+}
+
+async function addAdmin(platform) {
+  var uid = prompt('输入要添加的管理员 ID:');
+  if (!uid || !uid.trim()) return;
+  try {
+    var r = await fetch('/api/config/admins/' + platform + '/add', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({user_id: uid.trim()}),
+    });
+    var data = await r.json();
+    if (data.ok) renderTags(platform, data.admins);
+    else alert(data.error || '添加失败');
+  } catch (e) { console.error(e); }
+}
+
+async function removeAdmin(platform, uid) {
+  if (!confirm('确认移除管理员 ' + uid + ' ?')) return;
+  try {
+    var r = await fetch('/api/config/admins/' + platform + '/remove', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({user_id: uid}),
+    });
+    var data = await r.json();
+    if (data.ok) renderTags(platform, data.admins);
+    else alert(data.error || '移除失败');
+  } catch (e) { console.error(e); }
+}
+
+// ═══════════════════════════════════════════════════════
+//  日志轮询（替代 SSE，无持久连接）
+// ═══════════════════════════════════════════════════════
+
+var logSince = 0;
+var logPollTimer = null;
+var logLines = [];
+
+function addLogLines(lines) {
+  for (var i = 0; i < lines.length; i++) {
+    logLines.push(lines[i]);
+  }
+  if (logLines.length > 500) logLines.splice(0, logLines.length - 500);
+  document.getElementById('log-output').textContent = logLines.join('\n');
+  var container = document.getElementById('log-container');
+  container.scrollTop = container.scrollHeight;
+}
+
+async function pollLogs() {
+  try {
+    var r = await fetch('/api/logs?since=' + logSince);
+    var data = await r.json();
+    if (data.lines && data.lines.length > 0) addLogLines(data.lines);
+    logSince = data.next_since;
+  } catch (e) { /* ignore */ }
+}
+
+function clearLogs() {
+  logLines = [];
+  document.getElementById('log-output').textContent = '';
+}
+
+// ═══════════════════════════════════════════════════════
+//  时钟
+// ═══════════════════════════════════════════════════════
+
+function updateTime() {
+  document.getElementById('time').textContent = new Date().toLocaleString('zh-CN', {hour12: false});
+}
+
+// ═══════════════════════════════════════════════════════
+//  初始化
+// ═══════════════════════════════════════════════════════
+
+refreshStatus();
+loadConfig();
+updateTime();
+setInterval(updateTime, 1000);
+setInterval(refreshStatus, 5000);
+logPollTimer = setInterval(pollLogs, 2000);
+pollLogs();
+</script>
+</body>
+</html>

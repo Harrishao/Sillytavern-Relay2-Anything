@@ -1,0 +1,187 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #1a1a2e;
+  --card-bg: #16213e;
+  --accent: #4A90D9;
+  --text: #e0e0e0;
+  --text-dim: #888;
+  --border: #2a2a4a;
+  --on: #4caf50;
+  --off: #f44336;
+  --btn: #2d2d4a;
+  --log-bg: #0d1117;
+  --tag-bg: #1e3a5f;
+}
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+/* ── 标题栏 ── */
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--accent);
+}
+header h1 { font-size: 1.3em; }
+#time { color: var(--text-dim); font-size: 0.85em; }
+
+/* ── 通用区块 ── */
+.section { margin-bottom: 24px; }
+.section h2 {
+  font-size: 1.1em; margin-bottom: 12px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.section-header h2 { border: none; margin-bottom: 0; }
+.section-header button {
+  padding: 4px 14px; border: none; border-radius: 5px;
+  background: var(--btn); color: var(--text); cursor: pointer; font-size: 0.8em;
+}
+.section-header button:hover { background: var(--accent); }
+
+/* ── 平台运行卡片 ── */
+.platform-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+
+.platform-card {
+  background: var(--card-bg); border-radius: 10px; padding: 16px;
+  border: 1px solid var(--border);
+}
+.pc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.pc-header h3 { font-size: 1.05em; }
+
+.run-badge {
+  font-size: 0.8em; font-weight: 600; padding: 2px 10px; border-radius: 10px;
+}
+.run-badge.on { background: #1b5e20; color: var(--on); }
+.run-badge.off { background: #4a1a1a; color: var(--off); }
+
+.pc-body { margin-bottom: 10px; font-size: 0.82em; }
+.hint.ok { color: var(--on); }
+.hint.warn { color: #ff9800; }
+
+.pc-actions { display: flex; gap: 8px; }
+.pc-actions button {
+  flex: 1; padding: 7px 0; border: none; border-radius: 6px;
+  cursor: pointer; font-size: 0.85em; transition: background 0.2s;
+}
+.btn-toggle { flex: 1; }
+.btn-toggle.start { background: #1b5e20; color: var(--on); }
+.btn-toggle.start:hover { background: #2e7d32; }
+.btn-toggle.stop { background: #4a1a1a; color: var(--off); }
+.btn-toggle.stop:hover { background: #6b2020; }
+
+/* ── 配置表单 ── */
+.config-group {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 14px;
+}
+.config-group label { display: block; font-size: 0.85em; color: var(--text-dim); margin-bottom: 6px; }
+.config-group input {
+  width: 100%; padding: 8px 12px;
+  background: var(--log-bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: 6px;
+  font-size: 0.88em; outline: none;
+}
+.config-group input:focus { border-color: var(--accent); }
+
+/* 平台配置卡片 */
+.config-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px; margin-bottom: 14px;
+}
+.config-card h3 {
+  font-size: 1em; margin-bottom: 12px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+
+.config-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0; gap: 12px;
+}
+.config-row + .config-row { border-top: 1px solid rgba(255,255,255,0.04); }
+.config-row > label:first-child {
+  font-size: 0.85em; color: var(--text-dim); white-space: nowrap; min-width: 90px;
+}
+.config-row input[type="text"],
+.config-row input[type="number"] {
+  flex: 1; padding: 6px 10px;
+  background: var(--log-bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: 5px;
+  font-size: 0.85em; outline: none;
+}
+.config-row input:focus { border-color: var(--accent); }
+
+/*  Token 输入框 + 显示/隐藏按钮  */
+.token-input-wrap {
+  display: flex; flex: 1; gap: 4px;
+}
+.token-input-wrap input {
+  flex: 1; padding: 6px 10px;
+  background: var(--log-bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: 5px;
+  font-size: 0.85em; outline: none;
+}
+.token-input-wrap input:focus { border-color: var(--accent); }
+.token-toggle {
+  padding: 6px 10px; border: 1px solid var(--border); border-radius: 5px;
+  background: var(--btn); color: var(--text-dim); cursor: pointer;
+  font-size: 0.8em; white-space: nowrap;
+}
+.token-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+/* 滑块开关 */
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #555; border-radius: 24px; transition: 0.3s;
+}
+.slider::before {
+  content: ""; position: absolute;
+  height: 18px; width: 18px; left: 3px; bottom: 3px;
+  background: #fff; border-radius: 50%; transition: 0.3s;
+}
+.switch input:checked + .slider { background: var(--accent); }
+.switch input:checked + .slider::before { transform: translateX(20px); }
+
+/* 管理员标签 */
+.tag-area { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--tag-bg); padding: 3px 8px; border-radius: 12px;
+  font-size: 0.82em;
+}
+.tag-del {
+  background: none; border: none; color: var(--off); cursor: pointer;
+  font-size: 1.1em; line-height: 1; padding: 0 2px;
+}
+.tag-del:hover { color: #ff5252; }
+
+.btn-add-tag {
+  padding: 4px 12px; border: 1px dashed var(--border); border-radius: 12px;
+  background: none; color: var(--text-dim); cursor: pointer; font-size: 0.8em;
+  white-space: nowrap; margin-left: auto;
+}
+.btn-add-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── 日志 ── */
+.log-container {
+  height: 390px; overflow-y: auto; background: var(--log-bg);
+  border: 1px solid var(--border); border-radius: 8px; padding: 12px;
+}
+.log-container pre {
+  font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  font-size: 0.78em; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+  color: #c0c0c0;
+}
