@@ -11,6 +11,10 @@
   <!-- 标题栏 -->
   <header>
     <h1>SillyTavern Relay2 Anything</h1>
+    <div class="theme-switcher" id="theme-switcher">
+      <div class="theme-dot-main" id="theme-dot-main" title="切换配色方案"></div>
+      <div class="theme-extra-wrap" id="theme-extra-wrap"></div>
+    </div>
     <span id="time"></span>
   </header>
 
@@ -357,6 +361,63 @@ setInterval(updateTime, 1000);
 setInterval(refreshStatus, 5000);
 logPollTimer = setInterval(pollLogs, 2000);
 pollLogs();
+
+// ═══════════════════════════════════════════════════════
+//  主题切换
+// ═══════════════════════════════════════════════════════
+
+var themes = [
+  { id: '',              name: '默认',       accent: '#4285f4' },
+  { id: 'gemini-light', name: 'Gemini 日间', accent: '#4285f4' },
+  { id: 'gemini-dark',  name: 'Gemini 夜间', accent: '#4285f4' },
+  { id: 'claude-light', name: 'Claude 日间', accent: '#d97757' },
+  { id: 'claude-dark',  name: 'Claude 夜间', accent: '#d97757' },
+  { id: 'deepseek-light', name: 'DeepSeek 日间', accent: '#3b82f6' },
+  { id: 'deepseek-dark',  name: 'DeepSeek 夜间', accent: '#3b82f6' }
+];
+
+var currentTheme = localStorage.getItem('theme') || 'deepseek-dark';
+
+function applyTheme(themeId) {
+  currentTheme = themeId;
+  localStorage.setItem('theme', themeId);
+  if (themeId) {
+    document.documentElement.setAttribute('data-theme', themeId);
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+  updateThemeDots();
+}
+
+function updateThemeDots() {
+  var activeTheme = themes.find(function(t) { return t.id === currentTheme; }) || themes[0];
+  document.getElementById('theme-dot-main').style.background = activeTheme.accent;
+
+  var wrap = document.getElementById('theme-extra-wrap');
+  wrap.innerHTML = '';
+  for (var i = 0; i < themes.length; i++) {
+    var t = themes[i];
+    var dot = document.createElement('div');
+    dot.className = 'theme-dot-extra' + (t.id === currentTheme ? ' active' : '');
+    dot.style.background = t.accent;
+    dot.title = t.name;
+    dot.onclick = (function(id) {
+      return function(e) { e.stopPropagation(); applyTheme(id); };
+    })(t.id);
+    wrap.appendChild(dot);
+  }
+}
+
+document.getElementById('theme-dot-main').onclick = function(e) {
+  e.stopPropagation();
+  document.getElementById('theme-switcher').classList.toggle('expanded');
+};
+
+document.addEventListener('click', function() {
+  document.getElementById('theme-switcher').classList.remove('expanded');
+});
+
+applyTheme(currentTheme);
 </script>
 </body>
 </html>
