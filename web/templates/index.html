@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="gemini-dark">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,17 +10,7 @@
 <div class="app">
   <!-- 标题栏 -->
   <header>
-    <div class="header-left">
-      <h1>SillyTavern Relay2 Anything</h1>
-      <div class="theme-switcher" id="theme-switcher">
-        <div class="theme-ball active" data-theme="gemini-dark" data-label="Gemini 夜间" onclick="switchTheme('gemini-dark')"></div>
-        <div class="theme-ball" data-theme="gemini-light" data-label="Gemini 日间" onclick="switchTheme('gemini-light')"></div>
-        <div class="theme-ball" data-theme="claude-dark" data-label="Claude 夜间" onclick="switchTheme('claude-dark')"></div>
-        <div class="theme-ball" data-theme="claude-light" data-label="Claude 日间" onclick="switchTheme('claude-light')"></div>
-        <div class="theme-ball" data-theme="deepseek-dark" data-label="DeepSeek 夜间" onclick="switchTheme('deepseek-dark')"></div>
-        <div class="theme-ball" data-theme="deepseek-light" data-label="DeepSeek 日间" onclick="switchTheme('deepseek-light')"></div>
-      </div>
-    </div>
+    <h1>SillyTavern Relay2 Anything</h1>
     <span id="time"></span>
   </header>
 
@@ -355,59 +345,6 @@ function clearLogs() {
 function updateTime() {
   document.getElementById('time').textContent = new Date().toLocaleString('zh-CN', {hour12: false});
 }
-
-// ═══════════════════════════════════════════════════════
-//  主题切换
-// ═══════════════════════════════════════════════════════
-
-var currentTheme = localStorage.getItem('theme') || 'gemini-dark';
-
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  currentTheme = theme;
-  localStorage.setItem('theme', theme);
-  var balls = document.querySelectorAll('.theme-ball');
-  for (var i = 0; i < balls.length; i++) {
-    if (balls[i].getAttribute('data-theme') === theme) {
-      balls[i].classList.add('active');
-    } else {
-      balls[i].classList.remove('active');
-    }
-  }
-}
-
-function switchTheme(theme) {
-  if (theme === currentTheme) return;
-  applyTheme(theme);
-  closeThemeSwitcher();
-}
-
-function toggleThemeSwitcher(e) {
-  e.stopPropagation();
-  var sw = document.getElementById('theme-switcher');
-  sw.classList.toggle('open');
-}
-
-function closeThemeSwitcher() {
-  document.getElementById('theme-switcher').classList.remove('open');
-}
-
-document.getElementById('theme-switcher').addEventListener('click', function(e) {
-  if (e.target.classList.contains('theme-ball') && e.target.classList.contains('active')) {
-    toggleThemeSwitcher(e);
-  } else if (e.target.classList.contains('theme-ball')) {
-    e.stopPropagation();
-  }
-});
-
-document.addEventListener('click', function(e) {
-  var sw = document.getElementById('theme-switcher');
-  if (!sw.contains(e.target)) {
-    closeThemeSwitcher();
-  }
-});
-
-applyTheme(currentTheme);
 
 // ═══════════════════════════════════════════════════════
 //  初始化
