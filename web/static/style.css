@@ -2,13 +2,13 @@
 
 /* ── 默认 :root 回退（无 data-theme 或未知主题时使用）── */
 :root {
-  --bg: #f8fafc; --card-bg: #eef1f5; --accent: #3b82f6;
-  --text: #1a1d2e; --text-dim: #6b7280; --border: #e2e5ea;
-  --on: #10b981; --off: #ef4444; --btn: #e8ecf1;
-  --log-bg: #f1f4f8; --tag-bg: #e0e5f5;
-  --badge-on-bg: #e0f5ec; --badge-off-bg: #fde8e8;
-  --btn-start-bg: #e0f5ec; --btn-start-hover: #bce8d4;
-  --btn-stop-bg: #fde8e8; --btn-stop-hover: #f5c6c6;
+  --bg: #faf9f6; --card-bg: #f0ece6; --accent: #d97756;
+  --text: #2d2420; --text-dim: #8a7d74; --border: #e0d8cf;
+  --on: #5a9e6f; --off: #c4726b; --btn: #ede8e0;
+  --log-bg: #f5f2ed; --tag-bg: #f0e6da;
+  --badge-on-bg: #e6f0e8; --badge-off-bg: #f5e6e4;
+  --btn-start-bg: #e6f0e8; --btn-start-hover: #cfe0d4;
+  --btn-stop-bg: #f5e6e4; --btn-stop-hover: #e8cfcc;
 }
 
 /* ── Gemini 日间 ── */
