@@ -2,6 +2,8 @@
 
 统一的多平台 SillyTavern 消息中继，支持 **Telegram**、**Discord**、**NapCat (QQ)** 三平台同时运行，附带 Web 管理面板。
 
+理论上其他支持 OneBot v11 框架的实现端也能兼容，并不局限于NapCat
+
 ## 项目结构
 
 ```
@@ -135,7 +137,7 @@ web:
 | `/admin.add <ID>` | 加入白名单 |
 | `/admin.del <ID>` | 移出白名单 |
 
-NapCat 平台额外支持：
+QQ 端额外支持：
 - `/regen`（等同于 `/regenerate`）
 - `/msg`（等同于 `/chat`,因为QQ桌面端输入`/cha`会变成小表情）
 - 管道串联命令：用 `|` 分隔，如 `/rf|/char 0|/chat 1` 刷新页面后，直接切换到第0个角色的第1个聊天
