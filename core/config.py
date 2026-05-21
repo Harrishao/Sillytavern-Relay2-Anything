@@ -45,7 +45,7 @@ class NapcatConfig(PlatformConfig):
 @dataclass
 class WebConfig:
     host: str = "127.0.0.1"
-    port: int = 5000
+    port: int = 4396
 
 
 @dataclass
