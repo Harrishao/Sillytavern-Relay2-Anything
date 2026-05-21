@@ -367,12 +367,12 @@ pollLogs();
 // ═══════════════════════════════════════════════════════
 
 var themes = [
-  { id: 'gemini-light', name: 'Gemini 日间', accent: '#4285f4' },
-  { id: 'gemini-dark',  name: 'Gemini 夜间', accent: '#4285f4' },
-  { id: 'claude-light', name: 'Claude 日间', accent: '#d97757' },
-  { id: 'claude-dark',  name: 'Claude 夜间', accent: '#d97757' },
-  { id: 'deepseek-light', name: 'DeepSeek 日间', accent: '#1d4ed8' },
-  { id: 'deepseek-dark',  name: 'DeepSeek 夜间', accent: '#1d4ed8' }
+  { id: 'gemini-light', name: 'Gemini 日间', icon: '/static/icons/gemini-light.png?v=2' },
+  { id: 'gemini-dark',  name: 'Gemini 夜间', icon: '/static/icons/gemini-dark.png?v=2' },
+  { id: 'claude-light', name: 'Claude 日间', icon: '/static/icons/claude-light.png?v=2' },
+  { id: 'claude-dark',  name: 'Claude 夜间', icon: '/static/icons/claude-dark.png?v=2' },
+  { id: 'deepseek-light', name: 'DeepSeek 日间', icon: '/static/icons/deepseek-light.png?v=2' },
+  { id: 'deepseek-dark',  name: 'DeepSeek 夜间', icon: '/static/icons/deepseek-dark.png?v=2' }
 ];
 
 var currentTheme = localStorage.getItem('theme') || 'deepseek-dark';
@@ -380,17 +380,13 @@ var currentTheme = localStorage.getItem('theme') || 'deepseek-dark';
 function applyTheme(themeId) {
   currentTheme = themeId;
   localStorage.setItem('theme', themeId);
-  if (themeId) {
-    document.documentElement.setAttribute('data-theme', themeId);
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-  }
+  document.documentElement.setAttribute('data-theme', themeId);
   updateThemeDots();
 }
 
 function updateThemeDots() {
   var activeTheme = themes.find(function(t) { return t.id === currentTheme; }) || themes[0];
-  document.getElementById('theme-dot-main').style.background = activeTheme.accent;
+  document.getElementById('theme-dot-main').style.backgroundImage = 'url(' + activeTheme.icon + ')';
 
   var wrap = document.getElementById('theme-extra-wrap');
   wrap.innerHTML = '';
@@ -398,7 +394,7 @@ function updateThemeDots() {
     var t = themes[i];
     var dot = document.createElement('div');
     dot.className = 'theme-dot-extra' + (t.id === currentTheme ? ' active' : '');
-    dot.style.background = t.accent;
+    dot.style.backgroundImage = 'url(' + t.icon + ')';
     dot.title = t.name;
     dot.onclick = (function(id) {
       return function(e) { e.stopPropagation(); applyTheme(id); };
