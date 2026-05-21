@@ -72,8 +72,10 @@ def load_config(path: str = None) -> Config:
     """加载 YAML 配置文件"""
     path = path or CONFIG_PATH
     if not os.path.isfile(path):
-        print(f"[core] 未找到 {path}，使用默认配置")
-        return Config()
+        print(f"[core] 未找到 {path}，使用默认配置并自动生成")
+        default_cfg = Config()
+        save_config(default_cfg, path)
+        return default_cfg
 
     with open(path, "r", encoding="utf-8") as f:
         raw = yaml.safe_load(f) or {}
