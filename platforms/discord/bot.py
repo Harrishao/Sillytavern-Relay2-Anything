@@ -32,14 +32,13 @@ class RelayBot(commands.Bot):
 
     async def on_ready(self):
         print(f"[discord] 已登录: {self.user} (ID: {self.user.id})", flush=True)
-        print("[discord] 正在启动浏览器...", flush=True)
-        await core.init_browser()
+        page = core.get_page()
+        if page is None or page.is_closed():
+            print("[discord] 正在启动浏览器...", flush=True)
+            await core.init_browser()
         print("[discord] 就绪！", flush=True)
 
     async def close(self):
-        if core.get_page() is not None:
-            print("[discord] 正在关闭浏览器...", flush=True)
-            await core.close_browser()
         await super().close()
 
 

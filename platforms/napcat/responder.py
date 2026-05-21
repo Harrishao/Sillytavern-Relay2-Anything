@@ -152,7 +152,6 @@ async def _cmd_st(websocket, data, args):
 
 async def _cmd_stop(websocket, data, args):
     cancelled = await core.cancel_processing()
-    core.release_lock()
     if cancelled:
         await _reply(websocket, data, "消息处理中止了哦")
     else:

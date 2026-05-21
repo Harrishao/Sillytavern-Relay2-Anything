@@ -2,14 +2,17 @@
 消息交互模块
 负责向 SillyTavern 注入消息、等待 LLM 回复、翻页切换、重新生成等
 """
+import re
+
 from .browser import get_page, dismiss_toasts
 from .screenshot import capture_screenshot
 
 
 async def inject_message(text: str) -> bool:
     page = get_page()
+    clean = re.sub(r'^/st\s*', '', text)
     try:
-        await page.fill("#send_textarea", text)
+        await page.fill("#send_textarea", clean)
         await page.evaluate(
             """(text) => {
                 const el = document.getElementById('send_textarea');
@@ -17,10 +20,10 @@ async def inject_message(text: str) -> bool:
                 el.dispatchEvent(new Event('input', {bubbles: true}));
                 el.dispatchEvent(new Event('change', {bubbles: true}));
             }""",
-            text,
+            clean,
         )
         await page.click("#send_but")
-        print(f"[core] 消息已注入: {text[:50]}...", flush=True)
+        print(f"[core] 消息已注入: {clean[:50]}...", flush=True)
         return True
     except Exception as e:
         print(f"[core] 消息注入失败: {e}", flush=True)

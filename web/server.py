@@ -65,7 +65,6 @@ async def _run_platform(platform: str):
     try:
         await launcher()
     except asyncio.CancelledError:
-        _emit(platform, f"{platform} Bot 任务被取消")
         raise
     except Exception as e:
         _emit(platform, f"{platform} Bot 异常退出: {e}")
@@ -81,7 +80,7 @@ async def start_platform(platform: str):
         pcfg.enabled = True
     save_config(config)
     _platform_tasks[platform] = asyncio.create_task(_run_platform(platform))
-    _emit(platform, f"{platform} Bot 已启动")
+    _emit(platform, f"{platform} Bot 正在启动...")
 
 
 async def stop_platform(platform: str):

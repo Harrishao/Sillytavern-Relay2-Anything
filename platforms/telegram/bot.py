@@ -185,7 +185,6 @@ async def cmd_stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await _check_whitelist(update):
         return
     ok = await interaction.cancel_processing()
-    core.release_lock()
     if ok:
         await update.message.reply_text("已中止当前生成。")
     else:
@@ -1077,7 +1076,7 @@ async def _post_init(app: Application):
 
 async def run_telegram_bot():
     """启动 Telegram Bot"""
-    token = cfg.config.telegram.bot_token
+    token = cfg.telegram.bot_token
     if not token:
         print("[telegram] 未配置 bot_token，跳过启动", flush=True)
         return
@@ -1104,4 +1103,15 @@ async def run_telegram_bot():
     app.add_error_handler(error_handler)
 
     print("[telegram] 正在启动...", flush=True)
-    await app.run_polling()
+    await app.initialize()
+    await app.updater.start_polling()
+    await app.start()
+
+    try:
+        await asyncio.Event().wait()
+    except asyncio.CancelledError:
+        pass
+    finally:
+        await app.updater.stop()
+        await app.stop()
+        await app.shutdown()

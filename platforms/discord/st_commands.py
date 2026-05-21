@@ -419,7 +419,6 @@ class STCommands(commands.Cog):
             return
         await interaction.response.defer()
         ok = await core.cancel_processing()
-        core.release_lock()
         if ok:
             await interaction.followup.send("已中止当前生成。")
         else:
